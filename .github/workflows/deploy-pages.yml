@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ['main', 'master', 'development']
+  workflow_dispatch: # allow manual run from Actions tab
 
 permissions:
   contents: read
