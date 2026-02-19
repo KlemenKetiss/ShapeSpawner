@@ -1,0 +1,31 @@
+{
+  "name": "shapespawner",
+  "version": "1.0.0",
+  "description": "This project is an interactive HTML Canvas–based application that simulates falling shapes within a defined rectangular area (canvas). Shapes are generated at a fixed interval, fall under gravity, and can be interacted with via mouse or touch input.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KlemenKetiss/ShapeSpawner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KlemenKetiss/ShapeSpawner/issues"
+  },
+  "homepage": "https://github.com/KlemenKetiss/ShapeSpawner#readme",
+  "dependencies": {
+    "pixi.js": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.5.0"
+  }
+}

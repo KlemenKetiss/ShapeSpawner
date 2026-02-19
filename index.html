@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shape Spawner</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="root">
+      <div id="canvas-container">
+        <div id="hud-overlay">
+          <div class="hud-label" id="hud-count">Shapes: 0</div>
+          <div class="hud-label" id="hud-area">Area: 0 px²</div>
+        </div>
+      </div>
+
+      <div id="controls">
+        <div class="control-group">
+          <span class="control-label">Spawn / s</span>
+          <button class="control-button" id="spawn-minus">−</button>
+          <span class="control-value" id="spawn-value">1</span>
+          <button class="control-button" id="spawn-plus">+</button>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Gravity</span>
+          <button class="control-button" id="gravity-minus">−</button>
+          <span class="control-value" id="gravity-value">800</span>
+          <button class="control-button" id="gravity-plus">+</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+  </html>
+
