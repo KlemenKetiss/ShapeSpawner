@@ -106,6 +106,15 @@ body {
   background: #020617;
 }
 
+.credits {
+  margin-top: auto;
+  align-self: center;
+  justify-self: center;
+  padding-bottom: max(80px, env(safe-area-inset-bottom, 0px));
+  color: #9ca3af;
+  font-size: 12px;
+}
+
 @media (max-width: 600px) {
   #root {
     width: 100vw;
@@ -126,7 +135,11 @@ body {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 10px;
-    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-top: 8px;
+  }
+
+  .credits {
+    padding-bottom: max(80px, env(safe-area-inset-bottom, 0px));
   }
 
   .control-group {
