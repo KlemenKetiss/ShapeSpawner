@@ -75,6 +75,13 @@ export class Game {
       getGravity: this.getGravity,
     });
 
+    this.app.stage.eventMode = 'static';
+    this.app.stage.hitArea = this.app.screen;
+    this.app.stage.on('pointerdown', (event: { global: { x: number; y: number } }) => {
+      const local = this.playfield.toLocal(event.global);
+      this.spawner.removeShapeAt(local.x, local.y);
+    });
+
     const hudCountEl = this.hudCountId ? document.getElementById(this.hudCountId) : null;
     const hudAreaEl = this.hudAreaId ? document.getElementById(this.hudAreaId) : null;
 

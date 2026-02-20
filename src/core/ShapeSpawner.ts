@@ -145,6 +145,39 @@ export class ShapeSpawner {
     }
   }
 
+  /** Extra logical units around the click point to count as a hit (makes click area slightly larger). */
+  private static readonly HIT_PADDING = 5;
+
+  /**
+   * If the point (in playfield coordinates) hits a shape, remove it and return it to the pool (same as despawning).
+   * Uses a slightly larger hit area (center + padding in 4 directions). Top-most shape wins. Returns true if removed.
+   */
+  removeShapeAt(playfieldX: number, playfieldY: number): boolean {
+    const p = ShapeSpawner.HIT_PADDING;
+    const hitPoints: [number, number][] = [
+      [playfieldX, playfieldY],
+      [playfieldX + p, playfieldY],
+      [playfieldX - p, playfieldY],
+      [playfieldX, playfieldY + p],
+      [playfieldX, playfieldY - p],
+    ];
+    for (let i = this.activeShapes.length - 1; i >= 0; i--) {
+      const shape = this.activeShapes[i];
+      const hit = hitPoints.some(([x, y]) => shape.containsPoint(x, y));
+      if (hit) {
+        if (shape.recycle) {
+          shape.recycle();
+          this.pool.push(shape);
+        } else {
+          shape.destroy();
+        }
+        this.activeShapes.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** Spawn one shape above the playfield with random kind, position, and one of five colors. */
   spawnOne(): void {
     const params = getRandomSpawnParams();
