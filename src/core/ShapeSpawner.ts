@@ -1,6 +1,6 @@
 import type { Container } from 'pixi.js';
 import type { IShape } from '../shapes/IShape';
-import type { Rect } from '../shapes/types';
+import type { Point, Rect } from '../shapes/types';
 import { Shape } from '../shapes/Shape';
 import { normalizeParams, type ShapeParams } from '../shapes/shapeGeometry';
 import { ShapeKind } from '../shapes/types';
@@ -19,14 +19,30 @@ const SPAWN_COLORS: number[] = [
   COLOR_SPAWN_PURPLE,
 ];
 
+// --- General spawn margins/constants ---
 const SPAWN_MARGIN_ABOVE = 80;
 const SPAWN_MARGIN_BELOW = 80;
+const ROTATION_RANDOMIZATION = Math.PI * 2;
+
+// --- General shape radiuses ---
 const MIN_RADIUS = 14;
 const MAX_RADIUS = 38;
+const FULL_CIRCLE = Math.PI * 2;
+
+// --- Irregular shape constants ---
+const IRREGULAR_MIN_VERTICES = 5;
+const IRREGULAR_MAX_VERTICES = 12;
+const ANGLE_RANDOMIZATION_IRREGULAR = 0.4;
+const MIN_RADIUS_FACTOR_IRREGULAR = 0.6;
+
+// --- Star shape constants ---
+const STAR_MIN_POINTS = 4; // min 4 points
+const STAR_MAX_POINTS = 6; // max 6 points
+const STAR_POINT_SPAN = STAR_MAX_POINTS - STAR_MIN_POINTS + 1;
 const STAR_MIN_INNER_RADIUS_RATIO = 0.4;
 const STAR_INNER_RADIUS_VARIATION = 0.35;
 
-/** Kinds used for timer spawn (excludes irregular). */
+/** Kinds used for timer spawn (including irregular). */
 const SPAWN_KINDS = [
   ShapeKind.Triangle,
   ShapeKind.Rectangle,
@@ -35,6 +51,7 @@ const SPAWN_KINDS = [
   ShapeKind.Circle,
   ShapeKind.Ellipse,
   ShapeKind.Star,
+  ShapeKind.Irregular,
 ] as const;
 
 function randomInRange(min: number, max: number): number {
@@ -50,16 +67,23 @@ function getRandomSpawnParams(): ShapeParams {
     return normalizeParams(kind, { radiusX: radius, radiusY });
   }
   if (kind === ShapeKind.Star) {
-    // Randomly generate the number of points for the star shape.
-    // We want stars to have between 4 and 6 points.
-    const STAR_MIN_POINTS = 4;
-    const STAR_MAX_POINTS = 6;
-    const STAR_POINT_SPAN = STAR_MAX_POINTS - STAR_MIN_POINTS + 1;
     const points = STAR_MIN_POINTS + Math.floor(Math.random() * STAR_POINT_SPAN);
     const innerRadius = radius * (STAR_MIN_INNER_RADIUS_RATIO + Math.random() * STAR_INNER_RADIUS_VARIATION);
     return normalizeParams(kind, { radius, points, innerRadius });
   }
-  return normalizeParams(kind, { radius, rotation: Math.random() * Math.PI * 2 });
+  if (kind === ShapeKind.Irregular) {
+    const numVertices =
+      IRREGULAR_MIN_VERTICES + Math.floor(Math.random() * (IRREGULAR_MAX_VERTICES - IRREGULAR_MIN_VERTICES + 1));
+    const vertices: Point[] = [];
+    for (let i = 0; i < numVertices; i++) {
+      const angle = (i / numVertices) * FULL_CIRCLE + Math.random() * ANGLE_RANDOMIZATION_IRREGULAR;
+      const r = randomInRange(radius * MIN_RADIUS_FACTOR_IRREGULAR, radius);
+      vertices.push({ x: r * Math.cos(angle), y: r * Math.sin(angle) });
+    }
+    vertices.sort((a, b) => Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x));
+    return { kind: 'irregular', vertices };
+  }
+  return normalizeParams(kind, { radius, rotation: Math.random() * ROTATION_RANDOMIZATION });
 }
 
 export type ShapeSpawnerOptions = {
