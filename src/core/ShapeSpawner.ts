@@ -22,6 +22,8 @@ const SPAWN_COLORS: number[] = [
 // --- General spawn margins/constants ---
 const SPAWN_MARGIN_ABOVE = 80;
 const SPAWN_MARGIN_BELOW = 80;
+/** Cap active shapes to avoid overload (e.g. autoclicker). */
+const MAX_ACTIVE_SHAPES = 250;
 const ROTATION_RANDOMIZATION = Math.PI * 2;
 
 // --- General shape radiuses ---
@@ -198,6 +200,7 @@ export class ShapeSpawner {
   }
 
   private addShapeAt(x: number, y: number, params: ShapeParams): void {
+    if (this.activeShapes.length >= MAX_ACTIVE_SHAPES) return;
     const color = SPAWN_COLORS[Math.floor(Math.random() * SPAWN_COLORS.length)];
     const gravity = this.getGravity();
 

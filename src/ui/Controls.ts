@@ -30,6 +30,60 @@ const SPAWN_RATE_STEP = 1;
 /** Radix for parsing integer strings (decimal). */
 const RADIX_DECIMAL = 10;
 
+/** Delay (ms) before hold starts repeating. */
+const HOLD_INITIAL_DELAY_MS = 400;
+/** Interval (ms) between repeats while held. */
+const HOLD_REPEAT_INTERVAL_MS = 80;
+
+function bindHoldRepeat(
+  element: HTMLElement | null,
+  action: () => void,
+  cleanupRef: { timeoutId?: ReturnType<typeof setTimeout>; intervalId?: ReturnType<typeof setInterval> }
+): void {
+  if (!element) return;
+
+  const clearTimers = (): void => {
+    if (cleanupRef.timeoutId !== undefined) {
+      clearTimeout(cleanupRef.timeoutId);
+      cleanupRef.timeoutId = undefined;
+    }
+    if (cleanupRef.intervalId !== undefined) {
+      clearInterval(cleanupRef.intervalId);
+      cleanupRef.intervalId = undefined;
+    }
+  };
+
+  const onPointerDown = (e: PointerEvent): void => {
+    clearTimers();
+    element.setPointerCapture(e.pointerId);
+    action();
+    cleanupRef.timeoutId = setTimeout(() => {
+      cleanupRef.timeoutId = undefined;
+      cleanupRef.intervalId = setInterval(action, HOLD_REPEAT_INTERVAL_MS);
+    }, HOLD_INITIAL_DELAY_MS);
+  };
+
+  const onPointerUp = (e: PointerEvent): void => {
+    clearTimers();
+    element.releasePointerCapture(e.pointerId);
+  };
+  const onPointerLeave = (): void => clearTimers();
+
+  element.addEventListener('pointerdown', onPointerDown);
+  element.addEventListener('pointerup', onPointerUp);
+  element.addEventListener('pointerleave', onPointerLeave);
+  element.addEventListener('pointercancel', onPointerUp);
+
+  // Store for unbind (we need to remove these)
+  (element as HTMLElement & { _holdRepeatCleanup?: () => void })._holdRepeatCleanup = () => {
+    clearTimers();
+    element.removeEventListener('pointerdown', onPointerDown);
+    element.removeEventListener('pointerup', onPointerUp);
+    element.removeEventListener('pointerleave', onPointerLeave);
+    element.removeEventListener('pointercancel', onPointerUp);
+  };
+}
+
 export function createControls(options: ControlsOptions): Controls {
   const spawnValueEl = document.getElementById(options.spawnValueId);
   const gravityValueEl = document.getElementById(options.gravityValueId);
@@ -72,18 +126,22 @@ export function createControls(options: ControlsOptions): Controls {
     gravityValueEl.textContent = String(level);
   };
 
+  const spawnHoldCleanup = { timeoutId: undefined as ReturnType<typeof setTimeout> | undefined, intervalId: undefined as ReturnType<typeof setInterval> | undefined };
+  const gravityHoldCleanup = { timeoutId: undefined as ReturnType<typeof setTimeout> | undefined, intervalId: undefined as ReturnType<typeof setInterval> | undefined };
+  type ElWithCleanup = (HTMLElement | null) & { _holdRepeatCleanup?: () => void };
+
   const bind = (): void => {
-    spawnMinusBtn?.addEventListener('click', onSpawnMinus);
-    spawnPlusBtn?.addEventListener('click', onSpawnPlus);
-    gravityMinusBtn?.addEventListener('click', onGravityMinus);
-    gravityPlusBtn?.addEventListener('click', onGravityPlus);
+    bindHoldRepeat(spawnMinusBtn, onSpawnMinus, spawnHoldCleanup);
+    bindHoldRepeat(spawnPlusBtn, onSpawnPlus, spawnHoldCleanup);
+    bindHoldRepeat(gravityMinusBtn, onGravityMinus, gravityHoldCleanup);
+    bindHoldRepeat(gravityPlusBtn, onGravityPlus, gravityHoldCleanup);
   };
 
   const unbind = (): void => {
-    spawnMinusBtn?.removeEventListener('click', onSpawnMinus);
-    spawnPlusBtn?.removeEventListener('click', onSpawnPlus);
-    gravityMinusBtn?.removeEventListener('click', onGravityMinus);
-    gravityPlusBtn?.removeEventListener('click', onGravityPlus);
+    (spawnMinusBtn as ElWithCleanup)?._holdRepeatCleanup?.();
+    (spawnPlusBtn as ElWithCleanup)?._holdRepeatCleanup?.();
+    (gravityMinusBtn as ElWithCleanup)?._holdRepeatCleanup?.();
+    (gravityPlusBtn as ElWithCleanup)?._holdRepeatCleanup?.();
   };
 
   return { getSpawnRate, getGravity, bind, unbind };

@@ -11,7 +11,7 @@ export const PLAYFIELD_RECT: Rect = {
 };
 
 export const MIN_SPAWN_RATE = 1;
-export const MAX_SPAWN_RATE = 10;
+export const MAX_SPAWN_RATE = 50;
 
 /** Gravity is controlled by level 1–20; each level = 100 units. */
 export const GRAVITY_LEVELS = 20;
