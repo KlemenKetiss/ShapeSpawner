@@ -35,12 +35,13 @@ body {
 
 #hud-overlay {
   position: absolute;
-  top: 8px;
+  top: 0px;
   left: 8px;
   z-index: 10;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   pointer-events: none;
 }
 
@@ -127,7 +128,7 @@ body {
   }
 
   #hud-overlay {
-    top: max(40px, env(safe-area-inset-top, 0px));
+    top: max(4px, env(safe-area-inset-top, 0px));
   }
 
   #controls {
