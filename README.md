@@ -35,7 +35,7 @@ This project is an interactive HTML Canvas–based application that simulates fa
 
 Noting that this is a small task I used PIXI.Graphics for geometry and will cap the maximum number of shapes as a precausion for performance. As I am not redrawing and filling the graphics every tick the performance stays good (Avoiding clearing and drawing).
 
-Since we are always using shapes I decided to implement a pool and draw once on creation/reuse. Active shapes are capped at 250 which makes performance and memory predictable.
+Since we are always using shapes I decided to implement a pool and draw once on creation/reuse. Active shapes are capped at 250 which makes performance and memory predictable also this makes it unexploitable with autoclicker.
 
 With this assignment I decided to use a simple loop where gravity is applied every frame. This allows me to change gravity mid flight.
 
