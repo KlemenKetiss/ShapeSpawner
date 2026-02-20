@@ -1,4 +1,4 @@
-**Shape Spawner
+## Shape Spawner
 
 Interactive canvas application that simulates falling shapes in a playfield. Shapes spawn at a rate, fall under gravity, and can be removed by clicking or spawned by clicking empty space. Built with [PixiJS](https://pixijs.com/) v8 and [Vite](https://vitejs.dev/).
 
