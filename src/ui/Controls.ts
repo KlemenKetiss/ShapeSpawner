@@ -24,7 +24,7 @@ export type Controls = {
 };
 
 const DEFAULT_SPAWN_RATE = 1;
-/** Default gravity level (1–20); level 8 = 800. */
+/** Default gravity level; level 8 = medium gravity. */
 const DEFAULT_GRAVITY_LEVEL = 8;
 const SPAWN_RATE_STEP = 1;
 /** Radix for parsing integer strings (decimal). */
@@ -102,8 +102,8 @@ export function createControls(options: ControlsOptions): Controls {
   };
 
   const getGravityLevel = (): number => {
-    const n = parseInt(gravityValueEl.textContent ?? String(DEFAULT_GRAVITY_LEVEL), RADIX_DECIMAL);
-    const level = Number.isFinite(n) ? Math.round(n) : DEFAULT_GRAVITY_LEVEL;
+    const n = parseFloat(gravityValueEl.textContent ?? String(DEFAULT_GRAVITY_LEVEL));
+    const level = Number.isFinite(n) ? n : DEFAULT_GRAVITY_LEVEL;
     return Math.max(MIN_GRAVITY_LEVEL, Math.min(MAX_GRAVITY_LEVEL, level));
   };
 
@@ -118,12 +118,16 @@ export function createControls(options: ControlsOptions): Controls {
     spawnValueEl.textContent = String(v);
   };
   const onGravityMinus = (): void => {
-    const level = Math.max(MIN_GRAVITY_LEVEL, getGravityLevel() - 1);
-    gravityValueEl.textContent = String(level);
+    const current = getGravityLevel();
+    const step = current > 1 ? 1 : 0.1;
+    const next = Math.max(MIN_GRAVITY_LEVEL, +(current - step).toFixed(1));
+    gravityValueEl.textContent = String(next);
   };
   const onGravityPlus = (): void => {
-    const level = Math.min(MAX_GRAVITY_LEVEL, getGravityLevel() + 1);
-    gravityValueEl.textContent = String(level);
+    const current = getGravityLevel();
+    const step = current >= 1 ? 1 : 0.1;
+    const next = Math.min(MAX_GRAVITY_LEVEL, +(current + step).toFixed(1));
+    gravityValueEl.textContent = String(next);
   };
 
   const spawnHoldCleanup = { timeoutId: undefined as ReturnType<typeof setTimeout> | undefined, intervalId: undefined as ReturnType<typeof setInterval> | undefined };
