@@ -1,8 +1,9 @@
 import {
   MIN_SPAWN_RATE,
   MAX_SPAWN_RATE,
-  MIN_GRAVITY,
-  MAX_GRAVITY,
+  MIN_GRAVITY_LEVEL,
+  MAX_GRAVITY_LEVEL,
+  GRAVITY_PER_LEVEL,
 } from '../config/constants';
 
 export type ControlsOptions = {
@@ -23,9 +24,9 @@ export type Controls = {
 };
 
 const DEFAULT_SPAWN_RATE = 1;
-const DEFAULT_GRAVITY = 800;
+/** Default gravity level (1–20); level 8 = 800. */
+const DEFAULT_GRAVITY_LEVEL = 8;
 const SPAWN_RATE_STEP = 1;
-const GRAVITY_STEP = 100;
 /** Radix for parsing integer strings (decimal). */
 const RADIX_DECIMAL = 10;
 
@@ -46,10 +47,13 @@ export function createControls(options: ControlsOptions): Controls {
     return Number.isFinite(n) && n > 0 ? n : DEFAULT_SPAWN_RATE;
   };
 
-  const getGravity = (): number => {
-    const n = parseInt(gravityValueEl.textContent ?? String(DEFAULT_GRAVITY), RADIX_DECIMAL);
-    return Number.isFinite(n) && n > 0 ? n : DEFAULT_GRAVITY;
+  const getGravityLevel = (): number => {
+    const n = parseInt(gravityValueEl.textContent ?? String(DEFAULT_GRAVITY_LEVEL), RADIX_DECIMAL);
+    const level = Number.isFinite(n) ? Math.round(n) : DEFAULT_GRAVITY_LEVEL;
+    return Math.max(MIN_GRAVITY_LEVEL, Math.min(MAX_GRAVITY_LEVEL, level));
   };
+
+  const getGravity = (): number => getGravityLevel() * GRAVITY_PER_LEVEL;
 
   const onSpawnMinus = (): void => {
     const v = Math.max(MIN_SPAWN_RATE, Math.floor(getSpawnRate()) - SPAWN_RATE_STEP);
@@ -60,12 +64,12 @@ export function createControls(options: ControlsOptions): Controls {
     spawnValueEl.textContent = String(v);
   };
   const onGravityMinus = (): void => {
-    const v = Math.max(MIN_GRAVITY, getGravity() - GRAVITY_STEP);
-    gravityValueEl.textContent = String(v);
+    const level = Math.max(MIN_GRAVITY_LEVEL, getGravityLevel() - 1);
+    gravityValueEl.textContent = String(level);
   };
   const onGravityPlus = (): void => {
-    const v = Math.min(MAX_GRAVITY, getGravity() + GRAVITY_STEP);
-    gravityValueEl.textContent = String(v);
+    const level = Math.min(MAX_GRAVITY_LEVEL, getGravityLevel() + 1);
+    gravityValueEl.textContent = String(level);
   };
 
   const bind = (): void => {

@@ -12,8 +12,14 @@ export const PLAYFIELD_RECT: Rect = {
 
 export const MIN_SPAWN_RATE = 1;
 export const MAX_SPAWN_RATE = 10;
-export const MIN_GRAVITY = 100;
-export const MAX_GRAVITY = 2000;
+
+/** Gravity is controlled by level 1–20; each level = 100 units. */
+export const GRAVITY_LEVELS = 20;
+export const GRAVITY_PER_LEVEL = 200;
+export const MIN_GRAVITY_LEVEL = 1;
+export const MAX_GRAVITY_LEVEL = 20;
+export const MIN_GRAVITY = GRAVITY_PER_LEVEL * MIN_GRAVITY_LEVEL; // 100
+export const MAX_GRAVITY = GRAVITY_PER_LEVEL * MAX_GRAVITY_LEVEL; // 2000
 
 export const PLAYFIELD_BG_COLOR = 0x0f172a;
 export const APP_BG_COLOR = 0x020617;
