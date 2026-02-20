@@ -185,6 +185,19 @@ export class ShapeSpawner {
     const width = this.playfieldRect.right - this.playfieldRect.left - padding;
     const x = this.playfieldRect.left + padding / 2 + (width > 0 ? Math.random() * width : 0);
     const y = this.playfieldRect.top - SPAWN_MARGIN_ABOVE;
+    this.addShapeAt(x, y, params);
+  }
+
+  /**
+   * Spawn one shape at the given playfield coordinates (e.g. on click in empty area).
+   * Uses random kind, color, and current gravity.
+   */
+  spawnOneAt(playfieldX: number, playfieldY: number): void {
+    const params = getRandomSpawnParams();
+    this.addShapeAt(playfieldX, playfieldY, params);
+  }
+
+  private addShapeAt(x: number, y: number, params: ShapeParams): void {
     const color = SPAWN_COLORS[Math.floor(Math.random() * SPAWN_COLORS.length)];
     const gravity = this.getGravity();
 
