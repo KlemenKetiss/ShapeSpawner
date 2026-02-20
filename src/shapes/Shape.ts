@@ -122,6 +122,10 @@ export class Shape implements IShape {
     return containsPointForKind(this._params, this._x, this._y, x, y);
   }
 
+  setGravity(gravity: number): void {
+    this._gravity = gravity;
+  }
+
   update(deltaSeconds: number): void {
     this._velocityY += this._gravity * deltaSeconds;
     this._y += this._velocityY * deltaSeconds;

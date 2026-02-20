@@ -34,6 +34,9 @@ export interface IShape {
   /** Step the shape's physics (like position and velocity). Runs each frame while active. */
   update(deltaSeconds: number): void;
 
+  /** Optionally update gravity for already-falling shapes. */
+  setGravity?(gravity: number): void;
+
   /** Free up resources and remove from the stage. Call when destroying or pooling the shape. */
   destroy(): void;
 

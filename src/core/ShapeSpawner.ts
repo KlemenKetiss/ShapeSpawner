@@ -128,8 +128,13 @@ export class ShapeSpawner {
       }
     }
 
+    const gravity = this.getGravity();
+
     for (let i = this.activeShapes.length - 1; i >= 0; i--) {
       const shape = this.activeShapes[i];
+      if (shape.setGravity) {
+        shape.setGravity(gravity);
+      }
       shape.update(deltaSeconds);
       const local = shape.getBounds();
       const worldBottom = shape.displayObject.position.y + local.bottom;
